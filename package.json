@@ -1,0 +1,31 @@
+{
+  "name": "yelpcamp",
+  "version": "1.0.0",
+  "description": "yelp camp based on a course from Udemy",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adamahrens/YelpCamp.git"
+  },
+  "keywords": [
+    "node"
+  ],
+  "author": "Adam Ahrens",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/adamahrens/YelpCamp/issues"
+  },
+  "homepage": "https://github.com/adamahrens/YelpCamp#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "bootstrap": "^4.0.0-alpha.6",
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "jquery": "^3.3.1",
+    "jsdom": "^13.0.0",
+    "morgan": "^1.9.1"
+  }
+}
