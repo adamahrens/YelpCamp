@@ -36,6 +36,14 @@ app.get('/sunset', function (req, res) {
   });
 })
 
+app.get('/search', function(req, res) {
+  res.render('search')
+})
+
+app.get('/movie', function(req, res){
+  res.redirect('/movie/' + req.query.movie)
+})
+
 app.get('/movie/:name', function(req, res) {
   var movie = req.params.name
   var search = 'http://www.omdbapi.com/?apikey=' + process.env.MOVIE_ID_KEY +'&s=' + movie
