@@ -1,0 +1,10 @@
+<% include partials/top %>
+  <h1 class="border border-primary display-3">Movies</h1>
+  <ul>
+    <% movies.forEach(function(movie) { %>
+      <li>
+        <%= movie.Title %> - <%= movie.Year %>
+        </li>
+    <% }) %>
+  </ul>
+<% include partials/bottom %>
