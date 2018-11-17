@@ -50,7 +50,20 @@ app.get('/movie/:name', function(req, res) {
   request(search, function (error, response, body) {
     var json = JSON.parse(body);
     console.log(json);
-    var movies = json["Search"]
+
+    // Sort descending by year
+    var movies = json["Search"].sort(function(first, second) {
+      var f = parseInt(first.Year)
+      var s = parseInt(second.Year)
+      if (f > s) {
+        return -1;
+      } else if (f < s) {
+        return 1;
+      }
+
+      return 0;
+    });
+
     res.render('movies', { 'movies' : movies } );
   });
 })
