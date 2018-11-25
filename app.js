@@ -3,6 +3,7 @@ var express = require('express')
 var morgan = require('morgan');
 var parser = require('body-parser');
 var request = require('request');
+var faker = require('faker');
 var app = express();
 
 /* Parsing BODY on POST requests */
@@ -22,27 +23,27 @@ app.get('/googles', function(req, res) {
     console.log('error:', error);
     console.log('statusCode:', response && response.statusCode);
     console.log('body:', body);
-    res.send(body)
+    res.send(body);
   });
-})
+});
 
 app.get('/sunset', function (req, res) {
   request('https://query.yahooapis.com/v1/public/yql?q=select%20astronomy.sunset%20from%20weather.forecast%20where%20woeid%20in%20(select%20woeid%20from%20geo.places(1)%20where%20text%3D%22maui%2C%20hi%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys', function (error, response, body) {
     var json = JSON.parse(body);
     var sunset = json.query.results.channel.astronomy.sunset
-    console.log('Sunset time in Hawaii ' + sunset)
-    console.log('Sunset time in Hawaii another way ' + json["query"]["results"]["channel"]["astronomy"]["sunset"])
+    console.log('Sunset time in Hawaii ' + sunset);
+    console.log('Sunset time in Hawaii another way ' + json["query"]["results"]["channel"]["astronomy"]["sunset"]);
     res.json(json);
   });
-})
+});
 
 app.get('/search', function(req, res) {
-  res.render('search')
-})
+  res.render('search');
+});
 
 app.get('/movie', function(req, res){
-  res.redirect('/movie/' + req.query.movie)
-})
+  res.redirect('/movie/' + req.query.movie);
+});
 
 app.get('/movie/:name', function(req, res) {
   var movie = req.params.name
@@ -53,8 +54,8 @@ app.get('/movie/:name', function(req, res) {
 
     // Sort descending by year
     var movies = json["Search"].sort(function(first, second) {
-      var f = parseInt(first.Year)
-      var s = parseInt(second.Year)
+      var f = parseInt(first.Year);
+      var s = parseInt(second.Year);
       if (f > s) {
         return -1;
       } else if (f < s) {
@@ -64,14 +65,41 @@ app.get('/movie/:name', function(req, res) {
       return 0;
     });
 
-    res.render('movies', { 'movies' : movies } );
+    res.render('movies', { movies: movies } );
   });
-})
+});
+
+// images found at https://www.photosforclass.com/search?text=Camping
+var camps = [
+              { name: "River Bottom", image: "https://pixabay.com/get/e835b20e29f0003ed1584d05fb1d4e97e07ee3d21cac104491f3c07fafe8b5bc_340.jpg", blurb: faker.lorem.sentence() },
+              { name: "Granite Hill", image: "https://pixabay.com/get/e83db40e28fd033ed1584d05fb1d4e97e07ee3d21cac104491f3c07fafe8b5bc_340.jpg", blurb: faker.lorem.sentence() },
+              { name: "Price Creek",  image: "https://pixabay.com/get/e837b1072af4003ed1584d05fb1d4e97e07ee3d21cac104491f3c07fafe8b5bc_340.jpg", blurb: faker.lorem.sentence() }
+            ]
+
+app.get('/campgrounds', function(request, response) {
+  response.render('campgrounds', { campgrounds: camps });
+});
+
+app.get('/campgrounds/new', function(request, response) {
+  response.render('new');
+});
+
+app.post('/campgrounds', function(request, response) {
+  var n = request.body.name;
+  var i = request.body.image;
+  var b = request.body.blurb;
+  camps.push({ name: n, image: i, blurb: b})
+  response.redirect('/campgrounds');
+});
+
+app.get('/', function(request, response){
+  response.render('home');
+});
 
 app.get('*', function(request, response) {
     response.render('sorry');
-})
+});
 
 app.listen(3001, function() {
   console.log('Server listening on 3001');
-})
+});

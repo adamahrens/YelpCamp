@@ -1,0 +1,18 @@
+<% include partials/top %>
+  <h1 class="display-3">Campgrounds</h1>
+  <div class="float-right">
+    <% include partials/campground-form %>
+  </div>
+  <% campgrounds.forEach(function(campground) { %>
+    <div class="col-6 mb-2">
+      <div class="card">
+        <img class="card-img-top" src=<%= campground.image%> alt="Default campsite"/>
+        <div class="card-body">
+          <h4 class="card-title"><%= campground.name %></h4>
+          <p class="card-text"><%= campground.blurb %></p>
+        </div>
+      </div>
+    </div>
+  <% }) %>
+
+<% include partials/bottom %>
