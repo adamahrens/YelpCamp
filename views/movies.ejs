@@ -1,18 +1,19 @@
 <% include partials/top %>
   <h1 class="display-3">Movies</h1>
   <table class="table">
-  <thead class="thead-dark">
-    <tr>
-      <th scope="col">Title</th>
-      <th scope="col">Year</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% movies.forEach(function(movie) { %>
+    <thead class="thead-dark">
       <tr>
-        <td><%= movie.Title %></td>
-        <td><%= movie.Year %></td>
+        <th scope="col">Title</th>
+        <th scope="col">Year</th>
       </tr>
-    <% }) %>
-  </tbody>
+    </thead>
+    <tbody>
+      <% movies.forEach(function(movie) { %>
+        <tr>
+          <td><%= movie.Title %></td>
+          <td><%= movie.Year %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
 <% include partials/bottom %>

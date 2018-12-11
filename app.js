@@ -1,10 +1,58 @@
 require('dotenv').config();
 var express = require('express')
+var mongoose = require('mongoose')
 var morgan = require('morgan');
 var parser = require('body-parser');
 var request = require('request');
 var faker = require('faker');
 var app = express();
+
+/* Add dummy data to app */
+mongoose.connect('mongodb://localhost/yelpcamp', { useNewUrlParser: true});
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection to database error:'));
+db.once('open', function() {
+  console.log('connection to database successful');
+});
+
+var campgroundSchema = new mongoose.Schema({
+  name: String,
+  image: String,
+  blurb: String
+});
+
+var Campground = mongoose.model('Campground', campgroundSchema);
+
+// Campground.deleteMany({}, function(error){
+//   if (error) {
+//     console.log('Error deleting all Campground records');
+//   }
+// });
+
+// images found at https://www.photosforclass.com/search?text=Camping
+Campground.create({ name: "River Bottom", image: "https://pixabay.com/get/e835b20e29f0003ed1584d05fb1d4e97e07ee3d21cac104491f4c570afefb1be_340.jpg", blurb: faker.lorem.sentence() }, function(error, obj) {
+  if (error) {
+    console.log("Error saving campground1 to database");
+  } else {
+    console.log('Saved ' + obj + ' to the database');
+  }
+});
+
+Campground.create({ name: "Granite Hill", image: "https://pixabay.com/get/e835b20e29f7083ed1584d05fb1d4e97e07ee3d21cac104491f4c570afefb1be_340.jpg", blurb: faker.lorem.sentence() }, function(error, obj) {
+  if (error) {
+    console.log("Error saving campground2 to database");
+  } else {
+    console.log('Saved ' + obj + ' to the database');
+  }
+});
+
+Campground.create({ name: "Price Creek",  image: "https://pixabay.com/get/e837b1072af4003ed1584d05fb1d4e97e07ee3d21cac104491f4c570afefb1be_340.jpg", blurb: faker.lorem.sentence() }, function(error, obj) {
+  if (error) {
+    console.log("Error saving campground3 to database");
+  } else {
+    console.log('Saved ' + obj + ' to the database');
+  }
+});
 
 /* Parsing BODY on POST requests */
 app.use(parser.urlencoded({ extended: true}));
@@ -69,27 +117,32 @@ app.get('/movie/:name', function(req, res) {
   });
 });
 
-// images found at https://www.photosforclass.com/search?text=Camping
-var camps = [
-              { name: "River Bottom", image: "https://pixabay.com/get/e835b20e29f0003ed1584d05fb1d4e97e07ee3d21cac104491f3c07fafe8b5bc_340.jpg", blurb: faker.lorem.sentence() },
-              { name: "Granite Hill", image: "https://pixabay.com/get/e83db40e28fd033ed1584d05fb1d4e97e07ee3d21cac104491f3c07fafe8b5bc_340.jpg", blurb: faker.lorem.sentence() },
-              { name: "Price Creek",  image: "https://pixabay.com/get/e837b1072af4003ed1584d05fb1d4e97e07ee3d21cac104491f3c07fafe8b5bc_340.jpg", blurb: faker.lorem.sentence() }
-            ]
-
 app.get('/campgrounds', function(request, response) {
-  response.render('campgrounds', { campgrounds: camps });
-});
+  Campground.find({}, function(error, camps) {
+    var finalCamps = error ? [] : camps
+    response.render('campgrounds', { campgrounds: finalCamps });
+  });
 
-app.get('/campgrounds/new', function(request, response) {
-  response.render('new');
 });
 
 app.post('/campgrounds', function(request, response) {
   var n = request.body.name;
   var i = request.body.image;
   var b = request.body.blurb;
-  camps.push({ name: n, image: i, blurb: b})
+
+  Campground.create({ name: n, image: i, blurb: b}, function(error, obj) {
+    if (error) {
+      console.log("Error saving new campground to database");
+    } else {
+      console.log('Saved ' + obj + ' to the database');
+    }
+  });
+
   response.redirect('/campgrounds');
+});
+
+app.get('/campgrounds/new', function(request, response) {
+  response.render('new');
 });
 
 app.get('/', function(request, response){
