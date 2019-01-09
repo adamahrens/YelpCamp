@@ -7,50 +7,62 @@ var request = require('request');
 var faker = require('faker');
 var app = express();
 
-/* Add dummy data to app */
-mongoose.connect('mongodb://localhost/yelpcamp', { useNewUrlParser: true});
+mongoose.connect('mongodb://localhost/yelpcamp', { useNewUrlParser: true });
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection to database error:'));
 db.once('open', function() {
   console.log('connection to database successful');
 });
 
+// Schema
 var campgroundSchema = new mongoose.Schema({
   name: String,
   image: String,
   blurb: String
 });
 
+// Construct Model
 var Campground = mongoose.model('Campground', campgroundSchema);
 
+//
 // Campground.deleteMany({}, function(error){
 //   if (error) {
 //     console.log('Error deleting all Campground records');
 //   }
 // });
 
-// images found at https://www.photosforclass.com/search?text=Camping
-Campground.create({ name: "River Bottom", image: "https://pixabay.com/get/e835b20e29f0003ed1584d05fb1d4e97e07ee3d21cac104491f4c570afefb1be_340.jpg", blurb: faker.lorem.sentence() }, function(error, obj) {
+Campground.countDocuments({}, function(error, count){
   if (error) {
-    console.log("Error saving campground1 to database");
-  } else {
-    console.log('Saved ' + obj + ' to the database');
+    console.log("Error fetching count of Campgrounds");
   }
-});
 
-Campground.create({ name: "Granite Hill", image: "https://pixabay.com/get/e835b20e29f7083ed1584d05fb1d4e97e07ee3d21cac104491f4c570afefb1be_340.jpg", blurb: faker.lorem.sentence() }, function(error, obj) {
-  if (error) {
-    console.log("Error saving campground2 to database");
-  } else {
-    console.log('Saved ' + obj + ' to the database');
-  }
-});
+  if (count == 0) {
+    console.log("Populating the database");
+    Campground.create({ name: "River Bottom", image: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80", blurb: faker.lorem.sentence() }, function(error, obj) {
+      if (error) {
+        console.log("Error saving campground1 to database");
+      } else {
+        console.log('Saved ' + obj + ' to the database');
+      }
+    });
 
-Campground.create({ name: "Price Creek",  image: "https://pixabay.com/get/e837b1072af4003ed1584d05fb1d4e97e07ee3d21cac104491f4c570afefb1be_340.jpg", blurb: faker.lorem.sentence() }, function(error, obj) {
-  if (error) {
-    console.log("Error saving campground3 to database");
+    Campground.create({ name: "Granite Hill", image: "https://images.unsplash.com/photo-1517824806704-9040b037703b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80", blurb: faker.lorem.sentence() }, function(error, obj) {
+      if (error) {
+        console.log("Error saving campground2 to database");
+      } else {
+        console.log('Saved ' + obj + ' to the database');
+      }
+    });
+
+    Campground.create({ name: "Price Creek",  image: "https://images.unsplash.com/photo-1508873696983-2dfd5898f08b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80", blurb: faker.lorem.sentence() }, function(error, obj) {
+      if (error) {
+        console.log("Error saving campground3 to database");
+      } else {
+        console.log('Saved ' + obj + ' to the database');
+      }
+    });
   } else {
-    console.log('Saved ' + obj + ' to the database');
+    console.log("Number of campgrounds: " + count);
   }
 });
 
@@ -119,10 +131,14 @@ app.get('/movie/:name', function(req, res) {
 
 app.get('/campgrounds', function(request, response) {
   Campground.find({}, function(error, camps) {
+    if (error) {
+      console.log('Error fetching campgrounds ' + error);
+    }
+
     var finalCamps = error ? [] : camps
     response.render('campgrounds', { campgrounds: finalCamps });
-  });
-
+  })
+  .sort({ '_id' : -1 });
 });
 
 app.post('/campgrounds', function(request, response) {
@@ -135,10 +151,9 @@ app.post('/campgrounds', function(request, response) {
       console.log("Error saving new campground to database");
     } else {
       console.log('Saved ' + obj + ' to the database');
+      response.redirect('/campgrounds');
     }
   });
-
-  response.redirect('/campgrounds');
 });
 
 app.get('/campgrounds/new', function(request, response) {
