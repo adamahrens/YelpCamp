@@ -1,5 +1,6 @@
 require('dotenv').config();
 var express = require('express')
+var slug = require('mongoose-slug-generator');
 var mongoose = require('mongoose')
 var morgan = require('morgan');
 var parser = require('body-parser');
@@ -7,7 +8,9 @@ var request = require('request');
 var faker = require('faker');
 var app = express();
 
+mongoose.plugin(slug);
 mongoose.connect('mongodb://localhost/yelpcamp', { useNewUrlParser: true });
+
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection to database error:'));
 db.once('open', function() {
@@ -18,13 +21,13 @@ db.once('open', function() {
 var campgroundSchema = new mongoose.Schema({
   name: String,
   image: String,
-  blurb: String
+  blurb: String,
+  slug: { type: String, slug: 'name' }
 });
 
 // Construct Model
 var Campground = mongoose.model('Campground', campgroundSchema);
 
-//
 // Campground.deleteMany({}, function(error){
 //   if (error) {
 //     console.log('Error deleting all Campground records');
@@ -158,6 +161,17 @@ app.post('/campgrounds', function(request, response) {
 
 app.get('/campgrounds/new', function(request, response) {
   response.render('new');
+});
+
+app.get('/campgrounds/:id', function(request, response){
+  var name = request.params.id
+  Campground.find({ slug: name}, function(error, campgrounds) {
+    if (error || campgrounds.length == 0) {
+      console.log('Error finding by slug' + error);
+    } else {
+      response.render('show', { campground: campgrounds[0]} );
+    }
+  });
 });
 
 app.get('/', function(request, response){
