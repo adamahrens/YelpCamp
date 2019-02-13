@@ -7,8 +7,7 @@ var parser = require('body-parser');
 var request = require('request');
 var faker = require('faker');
 var app = express();
-
-mongoose.plugin(slug);
+var Campground =  require('./models/campground');
 mongoose.connect('mongodb://localhost/yelpcamp', { useNewUrlParser: true });
 
 var db = mongoose.connection;
@@ -16,17 +15,6 @@ db.on('error', console.error.bind(console, 'connection to database error:'));
 db.once('open', function() {
   console.log('connection to database successful');
 });
-
-// Schema
-var campgroundSchema = new mongoose.Schema({
-  name: String,
-  image: String,
-  blurb: String,
-  slug: { type: String, slug: 'name' }
-});
-
-// Construct Model
-var Campground = mongoose.model('Campground', campgroundSchema);
 
 // Campground.deleteMany({}, function(error){
 //   if (error) {

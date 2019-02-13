@@ -1,6 +1,7 @@
 # YelpCamp
 A NodeJS application to mess around with
 
+`mongod --dpath ~/Development/mongodb-database`
 `mongo`
 `use yelpcamp`
 `db.campgrounds.find().pretty()`
