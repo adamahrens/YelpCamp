@@ -7,7 +7,10 @@ var parser = require('body-parser');
 var request = require('request');
 var faker = require('faker');
 var app = express();
+var Comment = require('./models/comment');
 var Campground =  require('./models/campground');
+var populateDatabase = require('./database/seeds');
+
 mongoose.connect('mongodb://localhost/yelpcamp', { useNewUrlParser: true });
 
 var db = mongoose.connection;
@@ -16,46 +19,8 @@ db.once('open', function() {
   console.log('connection to database successful');
 });
 
-// Campground.deleteMany({}, function(error){
-//   if (error) {
-//     console.log('Error deleting all Campground records');
-//   }
-// });
-
-Campground.countDocuments({}, function(error, count){
-  if (error) {
-    console.log("Error fetching count of Campgrounds");
-  }
-
-  if (count == 0) {
-    console.log("Populating the database");
-    Campground.create({ name: "River Bottom", image: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80", blurb: faker.lorem.sentence() }, function(error, obj) {
-      if (error) {
-        console.log("Error saving campground1 to database");
-      } else {
-        console.log('Saved ' + obj + ' to the database');
-      }
-    });
-
-    Campground.create({ name: "Granite Hill", image: "https://images.unsplash.com/photo-1517824806704-9040b037703b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80", blurb: faker.lorem.sentence() }, function(error, obj) {
-      if (error) {
-        console.log("Error saving campground2 to database");
-      } else {
-        console.log('Saved ' + obj + ' to the database');
-      }
-    });
-
-    Campground.create({ name: "Price Creek",  image: "https://images.unsplash.com/photo-1508873696983-2dfd5898f08b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80", blurb: faker.lorem.sentence() }, function(error, obj) {
-      if (error) {
-        console.log("Error saving campground3 to database");
-      } else {
-        console.log('Saved ' + obj + ' to the database');
-      }
-    });
-  } else {
-    console.log("Number of campgrounds: " + count);
-  }
-});
+/* Populate Database */
+populateDatabase();
 
 /* Parsing BODY on POST requests */
 app.use(parser.urlencoded({ extended: true}));
@@ -153,7 +118,7 @@ app.get('/campgrounds/new', function(request, response) {
 
 app.get('/campgrounds/:id', function(request, response){
   var name = request.params.id
-  Campground.find({ slug: name}, function(error, campgrounds) {
+  Campground.find({ slug: name }, function(error, campgrounds) {
     if (error || campgrounds.length == 0) {
       console.log('Error finding by slug' + error);
     } else {
