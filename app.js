@@ -85,6 +85,7 @@ app.get('/movie/:name', function(req, res) {
   });
 });
 
+// GET
 app.get('/campgrounds', function(request, response) {
   Campground.find({}, function(error, camps) {
     if (error) {
@@ -97,6 +98,7 @@ app.get('/campgrounds', function(request, response) {
   .sort({ '_id' : -1 });
 });
 
+// CREATE
 app.post('/campgrounds', function(request, response) {
   var n = request.body.name;
   var i = request.body.image;
@@ -112,10 +114,12 @@ app.post('/campgrounds', function(request, response) {
   });
 });
 
+// NEW
 app.get('/campgrounds/new', function(request, response) {
   response.render('new');
 });
 
+// SHOW
 app.get('/campgrounds/:id', function(request, response){
   var name = request.params.id
   Campground
@@ -129,6 +133,12 @@ app.get('/campgrounds/:id', function(request, response){
     }
   });
 });
+
+// EDIT
+
+// UPDATE
+
+// DELETE
 
 app.get('/', function(request, response){
   response.render('home');
