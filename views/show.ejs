@@ -6,5 +6,15 @@
     <p><%= campground.blurb %></p>
   </div>
 </div>
+<div class="row">
+  <div class="col-12 mt-2">
+    <h4>Comments</h4>
+    <% campground.comments.forEach(function(comment) { %>
+      <p>
+        <%= comment.text %>
+        </p>
+    <% }) %>
+  </div>
+</div>
 
 <% include partials/bottom %>

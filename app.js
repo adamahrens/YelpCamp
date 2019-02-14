@@ -118,11 +118,14 @@ app.get('/campgrounds/new', function(request, response) {
 
 app.get('/campgrounds/:id', function(request, response){
   var name = request.params.id
-  Campground.find({ slug: name }, function(error, campgrounds) {
-    if (error || campgrounds.length == 0) {
+  Campground
+  .findOne({ slug: name })
+  .populate('comments')
+  .exec(function(error, campground) {
+    if (error) {
       console.log('Error finding by slug' + error);
     } else {
-      response.render('show', { campground: campgrounds[0]} );
+      response.render('show', { campground: campground });
     }
   });
 });
