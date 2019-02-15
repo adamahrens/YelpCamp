@@ -164,6 +164,9 @@ app.put('/campgrounds/:id', function(request, response) {
 });
 
 // DELETE
+app.delete('/campgrounds/:id', function(request, response) {
+  var name = request.params.id;
+});
 
 app.get('/', function(request, response){
   response.render('home');
