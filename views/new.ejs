@@ -1,4 +1,4 @@
 <% include partials/top %>
   <h1 class="display-3">New Campground</h1>
-  <% include partials/campground-form %>
+  <%- include('partials/campground-form', { campground: null }); %>
 <% include partials/bottom %>

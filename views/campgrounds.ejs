@@ -2,7 +2,7 @@
   <h1 class="display-3">Campgrounds</h1>
   <div class="float-right">
     <h3>Create New Campground</h3>
-    <% include partials/campground-form %>
+    <%- include('partials/campground-form', { campground: null}); %>
   </div>
   <% campgrounds.forEach(function(campground) { %>
     <div class="col-6 mb-2">
@@ -12,7 +12,7 @@
           <h4 class="card-title"><%= campground.name %></h4>
           <p class="card-text"><%= campground.blurb %></p>
           <p class="card-text">Comments( <%= campground.comments.length %> )</p>
-          <a href="/campgrounds/<%= campground.slug %>" class="btn btn-primary">More Info</a>
+          <a href="/campground/<%= campground.slug %>" class="btn btn-primary">More Info</a>
         </div>
       </div>
     </div>

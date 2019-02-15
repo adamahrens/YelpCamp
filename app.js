@@ -6,6 +6,7 @@ var morgan = require('morgan');
 var parser = require('body-parser');
 var request = require('request');
 var faker = require('faker');
+var methodOverride = require('method-override');
 var app = express();
 var Comment = require('./models/comment');
 var Campground =  require('./models/campground');
@@ -21,6 +22,9 @@ db.once('open', function() {
 
 /* Populate Database */
 populateDatabase();
+
+/* Allow PUT, DELETE form requests to route correctly */
+app.use(methodOverride('_method'))
 
 /* Parsing BODY on POST requests */
 app.use(parser.urlencoded({ extended: true}));
@@ -120,7 +124,7 @@ app.get('/campgrounds/new', function(request, response) {
 });
 
 // SHOW
-app.get('/campgrounds/:id', function(request, response){
+app.get('/campground/:id', function(request, response){
   var name = request.params.id
   Campground
   .findOne({ slug: name })
@@ -135,8 +139,29 @@ app.get('/campgrounds/:id', function(request, response){
 });
 
 // EDIT
+app.get('/campgrounds/:id/edit', function(request, response) {
+  var name = request.params.id;
+  Campground.findOne({ slug: name}, function(error, campground) {
+    if (error) {
+      console.log('Error finding by slug ' + error);
+    } else {
+      response.render('edit', { campground: campground});
+    }
+  });
+});
 
 // UPDATE
+app.put('/campgrounds/:id', function(request, response) {
+  var name = request.params.id;
+  Campground.findOneAndUpdate({ slug: name }, request.body.campground, { new: true }, function (error, campground) {
+    if (error) {
+      console.log('Erroring Updating campground. Redirecting... : ' + error);
+      response.redirect('/campgrounds/' + name + '/edit');
+    } else {
+      response.redirect('/campground/' + name)
+    }
+  });
+});
 
 // DELETE
 
