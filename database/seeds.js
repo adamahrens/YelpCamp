@@ -12,7 +12,7 @@ function populateDatabase() {
       promise1.then(function(camp) {
         console.log('Saved campground1 to the database');
 
-        Comment.create({ text: faker.lorem.sentences(2) }, function(error, com) {
+        Comment.create({ text: faker.lorem.sentences(2), author: faker.name.firstName() }, function(error, com) {
           if (error) {
             console.log("Error saving comment to campground1");
           } else {
@@ -27,7 +27,7 @@ function populateDatabase() {
       promise2.then(function(camp) {
         console.log('Saved campground2 to the database');
 
-        Comment.create({ text: faker.lorem.sentences(2) }, function(error, com) {
+        Comment.create({ text: faker.lorem.sentences(2), author: faker.name.firstName() }, function(error, com) {
           if (error) {
             console.log("Error saving comment to campground2");
           } else {
@@ -42,7 +42,7 @@ function populateDatabase() {
       promise3.then(function(camp) {
         console.log('Saved campground3 to the database');
 
-        Comment.create({ text: faker.lorem.sentences(2) }, function(error, com) {
+        Comment.create({ text: faker.lorem.sentences(2), author: faker.name.firstName() }, function(error, com) {
           if (error) {
             console.log("Error saving comment to campground3");
           } else {
@@ -57,7 +57,7 @@ function populateDatabase() {
       promise4.then(function(camp) {
         console.log('Saved campground4 to the database');
 
-        Comment.create({ text: faker.lorem.sentences(2) }, function(error, com) {
+        Comment.create({ text: faker.lorem.sentences(2), author: faker.name.firstName() }, function(error, com) {
           if (error) {
             console.log("Error saving comment to campground4");
           } else {

@@ -97,7 +97,7 @@ app.get('/campgrounds', function(request, response) {
     }
 
     var finalCamps = error ? [] : camps
-    response.render('campgrounds', { campgrounds: finalCamps });
+    response.render('./campgrounds/campgrounds', { campgrounds: finalCamps });
   })
   .sort({ '_id' : -1 });
 });
@@ -120,7 +120,7 @@ app.post('/campgrounds', function(request, response) {
 
 // NEW
 app.get('/campgrounds/new', function(request, response) {
-  response.render('new');
+  response.render('./campgrounds/new');
 });
 
 // SHOW
@@ -133,7 +133,7 @@ app.get('/campground/:id', function(request, response){
     if (error) {
       console.log('Error finding by slug' + error);
     } else {
-      response.render('show', { campground: campground });
+      response.render('./campgrounds/show', { campground: campground });
     }
   });
 });
@@ -145,7 +145,7 @@ app.get('/campgrounds/:id/edit', function(request, response) {
     if (error) {
       console.log('Error finding by slug ' + error);
     } else {
-      response.render('edit', { campground: campground});
+      response.render('./campgrounds/edit', { campground: campground});
     }
   });
 });
@@ -166,6 +166,41 @@ app.put('/campgrounds/:id', function(request, response) {
 // DELETE
 app.delete('/campgrounds/:id', function(request, response) {
   var name = request.params.id;
+});
+
+// NEW COMMENTS
+app.get('/campgrounds/:id/comments/new', function(request, response) {
+  var name = request.params.id;
+  Campground.findOne({ slug: name}, function(error, campground) {
+    if (error) {
+      console.log('Error looking up campground to add comment to:' + error);
+    } else {
+      response.render('./comments/new', { campground: campground});
+    }
+  });
+});
+
+// CREATE COMMENTS
+app.post('/campgrounds/:id/comments', function(request, response) {
+  var name = request.params.id;
+  Campground.findOne({ slug: name}, function(error, campground) {
+    if (error) {
+      console.log('Error looking up campground to add comment to:' + error);
+    } else {
+      console.log('Creating comment for a campground')
+      // Create Comment
+      Comment.create(request.body.comment, function(error, comment) {
+        if (error) {
+          console.log("Error saving comment to campground1");
+        } else {
+          campground.comments.push(comment);
+          campground.save();
+          console.log('Added a comment to campground1');
+          response.redirect('/campground/' + name)
+        }
+      });
+    }
+  });
 });
 
 app.get('/', function(request, response){
