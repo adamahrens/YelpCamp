@@ -1,16 +1,21 @@
 require('dotenv').config();
-var express = require('express')
-var slug = require('mongoose-slug-generator');
-var mongoose = require('mongoose')
-var morgan = require('morgan');
-var parser = require('body-parser');
-var request = require('request');
-var faker = require('faker');
-var methodOverride = require('method-override');
-var app = express();
-var Comment = require('./models/comment');
-var Campground =  require('./models/campground');
+var express          = require('express')
+var slug             = require('mongoose-slug-generator');
+var mongoose         = require('mongoose')
+var morgan           = require('morgan');
+var parser           = require('body-parser');
+var request          = require('request');
+var faker            = require('faker');
+var methodOverride   = require('method-override');
+var Comment          = require('./models/comment');
+var Campground       = require('./models/campground');
+var User             = require('./models/user');
 var populateDatabase = require('./database/seeds');
+var passport         = require('passport');
+var passportLocal    = require('passport-local');
+var passportMongoose = require('passport-local-mongoose');
+var session          = require("express-session");
+var app = express();
 
 mongoose.connect('mongodb://localhost/yelpcamp', { useNewUrlParser: true });
 
@@ -27,10 +32,19 @@ populateDatabase();
 app.use(methodOverride('_method'))
 
 /* Parsing BODY on POST requests */
-app.use(parser.urlencoded({ extended: true}));
+app.use(parser.urlencoded({ extended: true }));
 
 /* HTTP Logging to STDOUT */
 app.use(morgan('combined'));
+
+/* For Authentication */
+app.use(session({ secret: "Deadpool", resave: false, saveUninitialized: false }));
+app.use(passport.initialize());
+app.use(passport.session());
+
+/* Read session and encode/decode. Uses mongoose-local encode/decode functions */
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 /* Check on environment variables */
 console.log(process.env.MOVIE_ID_KEY);
@@ -87,6 +101,28 @@ app.get('/movie/:name', function(req, res) {
 
     res.render('movies', { movies: movies } );
   });
+});
+
+// Auth Routes
+app.get('/register', function(request, response) {
+  response.render('./register/register');
+});
+
+app.post('/register', function(request, response) {
+  var username = request.body.username;
+  var password = request.body.password;
+  User.register(new User({ username: username }), password, function(error, user) {
+
+  });
+});
+
+app.get('/login', function(request, response) {
+  response.render('./register/login');
+});
+
+app.post('/login', function(request, response) {
+  var username = request.body.username;
+  var password = request.body.password;
 });
 
 // GET
