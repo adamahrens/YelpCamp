@@ -105,24 +105,35 @@ app.get('/movie/:name', function(req, res) {
 
 // Auth Routes
 app.get('/register', function(request, response) {
-  response.render('./register/register');
+  response.render('./register/auth-form', { action: '/register', buttonText: 'Register' });
 });
 
 app.post('/register', function(request, response) {
   var username = request.body.username;
   var password = request.body.password;
   User.register(new User({ username: username }), password, function(error, user) {
+    if (error) {
+      console.log('Error registering user ' + error);
+      return response.render('./register/auth-form', { action: '/register', buttonText: 'Register' });
+    } else {
+      console.log('Registered User: Time to auth' + user);
 
+      // Could be twitter, facebook, etc
+      passport.authenticate('local')(request, response, function() {
+        response.redirect('/campgrounds');
+      });
+    }
   });
 });
 
 app.get('/login', function(request, response) {
-  response.render('./register/login');
+  response.render('./register/auth-form', { action: '/login', buttonText: 'Login' });
 });
 
 app.post('/login', function(request, response) {
-  var username = request.body.username;
-  var password = request.body.password;
+  passport.authenticate('local')(request, response, function() {
+    response.redirect('/campgrounds');
+  });
 });
 
 // GET
