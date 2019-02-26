@@ -47,6 +47,14 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 passport.use(new LocalStrategy(User.authenticate()));
 
+/* Middleware for getting currentUser for each routes */
+app.use(function(request, response, next) {
+  /* locals makes it available to templates */
+  console.log('Do we have a user? ' + request.user);
+  response.locals.currentUser = request.user;
+  next();
+});
+
 /* Check on environment variables */
 console.log(process.env.MOVIE_ID_KEY);
 
