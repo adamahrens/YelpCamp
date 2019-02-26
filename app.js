@@ -12,7 +12,7 @@ var Campground       = require('./models/campground');
 var User             = require('./models/user');
 var populateDatabase = require('./database/seeds');
 var passport         = require('passport');
-var passportLocal    = require('passport-local');
+var LocalStrategy    = require('passport-local');
 var passportMongoose = require('passport-local-mongoose');
 var session          = require("express-session");
 var app = express();
@@ -45,6 +45,7 @@ app.use(passport.session());
 /* Read session and encode/decode. Uses mongoose-local encode/decode functions */
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
+passport.use(new LocalStrategy(User.authenticate()));
 
 /* Check on environment variables */
 console.log(process.env.MOVIE_ID_KEY);
@@ -130,10 +131,9 @@ app.get('/login', function(request, response) {
   response.render('./register/auth-form', { action: '/login', buttonText: 'Login' });
 });
 
-app.post('/login', function(request, response) {
-  passport.authenticate('local')(request, response, function() {
-    response.redirect('/campgrounds');
-  });
+app.post('/login',
+          passport.authenticate('local', { successRedirect: '/campgrounds', failureRedirect: '/login'}),
+          function(request, response) {
 });
 
 // GET
