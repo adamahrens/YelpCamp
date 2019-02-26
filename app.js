@@ -136,6 +136,11 @@ app.post('/login',
           function(request, response) {
 });
 
+app.get('/logout', function(request, response) {
+  request.logout();
+  response.redirect('/login');
+});
+
 // GET
 app.get('/campgrounds', function(request, response) {
   Campground.find({}, function(error, camps) {
@@ -150,7 +155,7 @@ app.get('/campgrounds', function(request, response) {
 });
 
 // CREATE
-app.post('/campgrounds', function(request, response) {
+app.post('/campgrounds', loggedIn, function(request, response) {
   var n = request.body.name;
   var i = request.body.image;
   var b = request.body.blurb;
@@ -198,7 +203,7 @@ app.get('/campgrounds/:id/edit', function(request, response) {
 });
 
 // UPDATE
-app.put('/campgrounds/:id', function(request, response) {
+app.put('/campgrounds/:id', loggedIn,  function(request, response) {
   var name = request.params.id;
   Campground.findOneAndUpdate({ slug: name }, request.body.campground, { new: true }, function (error, campground) {
     if (error) {
@@ -211,7 +216,7 @@ app.put('/campgrounds/:id', function(request, response) {
 });
 
 // DELETE
-app.delete('/campgrounds/:id', function(request, response) {
+app.delete('/campgrounds/:id',loggedIn,  function(request, response) {
   var name = request.params.id;
 });
 
@@ -228,7 +233,7 @@ app.get('/campgrounds/:id/comments/new', function(request, response) {
 });
 
 // CREATE COMMENTS
-app.post('/campgrounds/:id/comments', function(request, response) {
+app.post('/campgrounds/:id/comments', loggedIn, function(request, response) {
   var name = request.params.id;
   Campground.findOne({ slug: name}, function(error, campground) {
     if (error) {
@@ -261,3 +266,11 @@ app.get('*', function(request, response) {
 app.listen(3001, function() {
   console.log('Server listening on 3001');
 });
+
+function loggedIn(request, response, next) {
+  if (request.isAuthenticated()) {
+    return next()
+  }
+
+  response.redirect('/login');
+}
