@@ -28,6 +28,11 @@ router.post('/campgrounds/:id/comments', loggedIn, function(request, response) {
         if (error) {
           console.log("Error saving comment to campground1");
         } else {
+          // Add username & id
+          var user = request.user;
+          comment.author.id = user._id;
+          comment.author.username = user.username;
+          comment.save();
           campground.comments.push(comment);
           campground.save();
           console.log('Added a comment to campground1');
