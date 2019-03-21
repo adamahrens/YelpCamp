@@ -18,7 +18,13 @@
     <h4 class="pull-right">$69/night</h4>
     <img src=<%= campground.image%> alt="Default campsite" class="img-thumbnail" />
     <p><%= campground.blurb %></p>
-    <a href="/campgrounds/<%= campground.slug%>/edit" class="btn btn-primary">Edit</a>
+    <div class="d-inline-flex">
+      <a href="/campgrounds/<%= campground.slug%>/edit" class="btn btn-primary mr-2">Edit</a>
+      <form action="/campgrounds/<%= campground._id %>?_method=DELETE" method="POST">
+        <button type="submit" class="btn btn-danger">Destroy</button>
+      </form>
+    </div>
+
     <div class="row mt-2">
       <div class="col-md-10 mt-2 mb-2 pb-2">
         <h4>Comments</h4>

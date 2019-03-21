@@ -58,7 +58,7 @@ router.get('/campgrounds/:id/edit', function(request, response) {
     if (error) {
       console.log('Error finding by slug ' + error);
     } else {
-      response.render('./campgrounds/edit', { campground: campground});
+      response.render('./campgrounds/edit', { campground: campground });
     }
   });
 });
@@ -78,7 +78,16 @@ router.put('/campgrounds/:id', loggedIn,  function(request, response) {
 
 // DELETE
 router.delete('/campgrounds/:id',loggedIn,  function(request, response) {
-  var name = request.params.id;
+  var id = request.params.id;
+  Campground.deleteOne({ _id: id }, function (error) {
+    if (error) {
+      console.log('Error deleting campground');
+    } else {
+      console.log('Successfully deleted Campground')
+    }
+
+    response.redirect('/campgrounds');
+  });
 });
 
 function loggedIn(request, response, next) {
