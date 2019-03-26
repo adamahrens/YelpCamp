@@ -34,6 +34,10 @@ db.once('open', function() {
 /* Populate Database */
 populateDatabase();
 
+/* custom stylesheets */
+
+app.use(express.static(__dirname + '/public'));
+
 /* Using Flash Messages */
 app.use(flash());
 

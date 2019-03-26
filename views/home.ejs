@@ -1,6 +1,92 @@
-<% include partials/top %>
-  <h1 class="display-3">Welcome to YelpCamp</h1>
-  <p>
-    Welcome to the one and only YelpCamp
-  </p>
-<% include partials/bottom %>
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="css/home.css" />
+  <title>YelpCamp</title>
+</head>
+
+<body>
+  <header>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+      <a class="navbar brand" href="/">YelpCamp</a>
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/campgrounds">Campgrounds</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/campgrounds/new">New</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/search">Search</a>
+        </li>
+      </ul>
+
+      <ul class="navbar-nav mr-auto float-right">
+        <% if (currentUser) { %>
+        <li class="nav-item">
+          <a class="nav-link" href="/logout">Logout
+            <%= currentUser.username %></a>
+        </li>
+        <% } else { %>
+        <li class="nav-item">
+          <a class="nav-link" href="/register">Register</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/login">Login</a>
+        </li>
+        <% } %>
+      </ul>
+    </nav>
+  </header>
+  <main role="main" class="container mt-5 pt-5">
+
+    <% if (success_messages.length > 0 ) { %>
+      <div class="alert alert-success" role="alert">
+        <%= success_messages[0] %>
+      </div>
+    <% } %>
+
+    <% if (error_messages.length > 0 ) { %>
+      <div class="alert alert-danger" role="alert">
+        <%= error_messages[0] %>
+      </div>
+    <% } %>
+
+<div id="landing-header">
+  <div class="jumbotron">
+    <h1 class="display-4">Welcome to YelpCamp!</h1>
+    <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+    <hr class="my-4">
+    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
+    <p class="lead">
+      <a class="btn btn-primary btn-lg" href="/campgrounds" role="button">Campgrounds</a>
+    </p>
+  </div>
+</div>
+ <ul class="slideshow">
+   <li></li>
+   <li></li>
+   <li></li>
+   <li></li>
+   <li></li>
+ </ul>
+</main>
+
+  <footer>
+    <div class="container">
+       <span class="text-muted">YelpCamp <%= new Date().getFullYear() %></span>
+    </div>
+  </footer>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  </body>
+</html>
