@@ -6,6 +6,7 @@ var Campground       = require('../models/campground');
 router.get('/campgrounds', function(request, response) {
   Campground.find({}, function(error, camps) {
     if (error) {
+      request.flash('danger', 'Unable to fetch campgrounds');
       console.log('Error fetching campgrounds ' + error);
     }
 
@@ -23,9 +24,11 @@ router.post('/campgrounds', loggedIn, function(request, response) {
 
   Campground.create({ name: n, image: i, blurb: b}, function(error, obj) {
     if (error) {
+      request.flash('danger', 'Unable to create Campground');
       console.log("Error saving new campground to database");
     } else {
       console.log('Saved ' + obj + ' to the database');
+      request.flash('success', 'Successfully created Campground');
       response.redirect('/campgrounds');
     }
   });
@@ -43,8 +46,11 @@ router.get('/campground/:id', function(request, response){
   .findOne({ slug: name })
   .populate('comments')
   .exec(function(error, campground) {
-    if (error) {
+    if (error || campground === null) {
+      request.flash('danger', 'Unable to show Campground');
+      response.redirect('/campgrounds');
       console.log('Error finding by slug' + error);
+      return
     } else {
       response.render('./campgrounds/show', { campground: campground });
     }
@@ -56,6 +62,7 @@ router.get('/campgrounds/:id/edit', function(request, response) {
   var name = request.params.id;
   Campground.findOne({ slug: name}, function(error, campground) {
     if (error) {
+      request.flash('danger', 'Unable to edit Campground');
       console.log('Error finding by slug ' + error);
     } else {
       response.render('./campgrounds/edit', { campground: campground });
@@ -69,6 +76,7 @@ router.put('/campgrounds/:id', loggedIn,  function(request, response) {
   Campground.findOneAndUpdate({ slug: name }, request.body.campground, { new: true }, function (error, campground) {
     if (error) {
       console.log('Erroring Updating campground. Redirecting... : ' + error);
+      request.flash('danger', 'Unable to update Campground');
       response.redirect('/campgrounds/' + name + '/edit');
     } else {
       response.redirect('/campground/' + name)
@@ -81,11 +89,13 @@ router.delete('/campgrounds/:id',loggedIn,  function(request, response) {
   var id = request.params.id;
   Campground.deleteOne({ _id: id }, function (error) {
     if (error) {
+      request.flash('danger', 'Unable to delete Campground');
       console.log('Error deleting campground');
     } else {
       console.log('Successfully deleted Campground')
     }
 
+    request.flash('success', 'Successfully deleted Campground');
     response.redirect('/campgrounds');
   });
 });
@@ -95,6 +105,7 @@ function loggedIn(request, response, next) {
     return next()
   }
 
+  request.flash('danger', 'Please login to continue');
   response.redirect('/login');
 }
 

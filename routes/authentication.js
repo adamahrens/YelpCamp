@@ -16,13 +16,16 @@ router.post('/register', function(request, response) {
   User.register(new User({ username: username }), password, function(error, user) {
     if (error) {
       console.log('Error registering user ' + error);
-      return response.render('./register/auth-form', { action: '/register', buttonText: 'Register' });
+      request.flash('danger', 'Unable to successfully register User');
+      response.redirect('/register');
+      return
     } else {
       console.log('Registered User: Time to auth' + user);
+      request.flash('success', 'Successfully logged in');
 
       // Could be twitter, facebook, etc
-      passport.authenticate('local')(request, response, function() {
-        response.redirect('/campgrounds');
+      passport.authenticate('local') (req, res, function() {
+        res.redirect('/campgrounds');
       });
     }
   });
@@ -39,6 +42,7 @@ router.post('/login',
 
 router.get('/logout', function(request, response) {
   request.logout();
+  request.flash('success', 'Successfully logged out');
   response.redirect('/login');
 });
 

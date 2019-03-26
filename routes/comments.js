@@ -48,6 +48,7 @@ function loggedIn(request, response, next) {
     return next()
   }
 
+  request.flash('danger', 'Please login to continue');
   response.redirect('/login');
 }
 

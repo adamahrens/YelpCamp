@@ -20,6 +20,7 @@ var movieRoutes      = require('./routes/movies');
 var campgroundRoutes = require('./routes/campgrounds');
 var commentsRoutes   = require('./routes/comments');
 var authenticationRoutes = require('./routes/authentication');
+var flash            = require('connect-flash');
 var app = express();
 
 mongoose.connect('mongodb://localhost/yelpcamp', { useNewUrlParser: true });
@@ -33,6 +34,9 @@ db.once('open', function() {
 /* Populate Database */
 populateDatabase();
 
+/* Using Flash Messages */
+app.use(flash());
+
 /* Allow PUT, DELETE form requests to route correctly */
 app.use(methodOverride('_method'))
 
@@ -40,7 +44,7 @@ app.use(methodOverride('_method'))
 app.use(parser.urlencoded({ extended: true }));
 
 /* HTTP Logging to STDOUT */
-app.use(morgan('combined'));
+//app.use(morgan('combined'));
 
 /* For Authentication */
 app.use(session({ secret: "Deadpool", resave: false, saveUninitialized: false }));
@@ -57,6 +61,12 @@ app.use(function(request, response, next) {
   /* locals makes it available to templates */
   console.log('Do we have a user? ' + request.user);
   response.locals.currentUser = request.user;
+  response.locals.success_messages = request.flash('success');
+  response.locals.error_messages = request.flash('danger');
+  console.log('Any success flashes?');
+  console.log(request.flash('success'));
+  console.log('Any danger flashes?');
+  console.log(request.flash('danger'));
   next();
 });
 

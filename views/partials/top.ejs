@@ -44,3 +44,15 @@
     </nav>
   </header>
   <main role="main" class="container mt-5 pt-5">
+
+    <% if (success_messages.length > 0 ) { %>
+      <div class="alert alert-success" role="alert">
+        <%= success_messages[0] %>
+      </div>
+    <% } %>
+
+    <% if (error_messages.length > 0 ) { %>
+      <div class="alert alert-danger" role="alert">
+        <%= error_messages[0] %>
+      </div>
+    <% } %>
