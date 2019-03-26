@@ -9,6 +9,7 @@ var campgroundSchema = new Schema({
   name: String,
   image: String,
   blurb: String,
+  price: Number,
   comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
   slug: { type: String, slug: 'name' }
 });

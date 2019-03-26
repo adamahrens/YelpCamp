@@ -22,9 +22,10 @@ router.get('/campgrounds', function(request, response) {
 router.post('/campgrounds', loggedIn, function(request, response) {
   var n = request.body.name;
   var i = request.body.image;
+  var p = request.body.price;
   var b = request.body.blurb;
 
-  Campground.create({ name: n, image: i, blurb: b}, function(error, obj) {
+  Campground.create({ name: n, price: p, image: i, blurb: b}, function(error, obj) {
     if (error) {
       console.log("Error saving new campground to database");
       request.flash('danger', 'Unable to create Campground');
@@ -83,6 +84,7 @@ router.put('/campgrounds/:id', loggedIn,  function(request, response) {
       request.flash('danger', 'Unable to update Campground');
       response.redirect('/campgrounds/' + name + '/edit');
     } else {
+      request.flash('success', 'Successfully updated Campground')
       response.redirect('/campground/' + name)
     }
   });
