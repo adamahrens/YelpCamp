@@ -6,12 +6,14 @@ var Campground       = require('../models/campground');
 router.get('/campgrounds', function(request, response) {
   Campground.find({}, function(error, camps) {
     if (error) {
-      request.flash('danger', 'Unable to fetch campgrounds');
       console.log('Error fetching campgrounds ' + error);
+      request.flash('danger', 'Unable to fetch campgrounds');
+      response.redirect('/');
+      return
+    } else {
+      var finalCamps = error ? [] : camps
+      response.render('./campgrounds/campgrounds', { campgrounds: finalCamps });
     }
-
-    var finalCamps = error ? [] : camps
-    response.render('./campgrounds/campgrounds', { campgrounds: finalCamps });
   })
   .sort({ '_id' : -1 });
 });
@@ -24,8 +26,9 @@ router.post('/campgrounds', loggedIn, function(request, response) {
 
   Campground.create({ name: n, image: i, blurb: b}, function(error, obj) {
     if (error) {
-      request.flash('danger', 'Unable to create Campground');
       console.log("Error saving new campground to database");
+      request.flash('danger', 'Unable to create Campground');
+      response.redirect('/campgrounds');
     } else {
       console.log('Saved ' + obj + ' to the database');
       request.flash('success', 'Successfully created Campground');
@@ -61,9 +64,10 @@ router.get('/campground/:id', function(request, response){
 router.get('/campgrounds/:id/edit', function(request, response) {
   var name = request.params.id;
   Campground.findOne({ slug: name}, function(error, campground) {
-    if (error) {
-      request.flash('danger', 'Unable to edit Campground');
+    if (error || campground === null) {
       console.log('Error finding by slug ' + error);
+      request.flash('danger', 'Unable to edit Campground');
+      response.redirect('/campgrounds');
     } else {
       response.render('./campgrounds/edit', { campground: campground });
     }
